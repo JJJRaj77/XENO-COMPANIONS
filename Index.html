@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xeno Companions</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0a0a0a;color:#f2f2f2;font-family:Segoe UI,Arial,sans-serif;line-height:1.6}
+  header.top{background:#000;border-bottom:3px solid #ff7a00;position:sticky;top:0;z-index:10}
+  .brand{color:#ff7a00;font-weight:bold;font-size:1.4rem;letter-spacing:2px;padding:12px 24px 0}
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;padding:10px 24px 0}
+  .tab{background:#161616;color:#fff;border:1px solid #ff7a00;border-bottom:none;border-radius:10px 10px 0 0;padding:10px 18px;cursor:pointer;font-weight:600;font-size:1rem}
+  .tab:hover{background:#2a1500}
+  .tab.active{background:#ff7a00;color:#000}
+  .page{display:none;max-width:1100px;margin:auto;padding:40px 20px;animation:fade .4s}
+  .page.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  h1{color:#ff7a00;font-size:2.6rem;text-shadow:0 0 18px #ff7a0066}
+  h2{color:#ff7a00;margin:25px 0 12px;border-left:6px solid #ff7a00;padding-left:12px}
+  p{margin-bottom:12px}
+  .hero{text-align:center;padding:70px 20px;background:radial-gradient(circle,#3a1a00,#0a0a0a 70%);border-radius:16px}
+  .hero p{max-width:650px;margin:15px auto;font-size:1.1rem}
+  .btn{display:inline-block;background:#ff7a00;color:#000;padding:12px 26px;border-radius:30px;border:none;font-weight:bold;cursor:pointer;font-size:1rem;margin:4px;transition:.2s}
+  .btn:hover{background:#fff;transform:scale(1.07)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+  .card{background:#161616;border:1px solid #ff7a00;border-radius:12px;padding:18px;transition:.2s;cursor:pointer;text-align:center}
+  .card:hover{box-shadow:0 0 18px #ff7a00aa;transform:translateY(-5px)}
+  .card .emoji{font-size:3rem}
+  .card h3{color:#ff7a00}
+  .tag{display:inline-block;background:#ff7a00;color:#000;font-size:.75rem;font-weight:bold;padding:2px 10px;border-radius:12px;margin-top:6px}
+  .filters{margin:15px 0}
+  .filters button{background:#161616;color:#fff;border:1px solid #ff7a00;border-radius:20px;padding:6px 16px;margin:3px;cursor:pointer}
+  .filters button.on{background:#ff7a00;color:#000}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:15px 0}
+  .stats div{background:#000;border:1px solid #ff7a0066;padding:12px;border-radius:8px}
+  .stats b{color:#ff7a00;display:block}
+  .bar{height:10px;background:#333;border-radius:6px;overflow:hidden;margin:3px 0 8px}
+  .bar span{display:block;height:100%;background:#ff7a00}
+  .box{background:#161616;border:1px solid #ff7a00;border-radius:12px;padding:22px;margin-bottom:18px}
+  .modal{display:none;position:fixed;inset:0;background:#000c;z-index:50;align-items:center;justify-content:center;padding:15px}
+  .modal.show{display:flex}
+  .modal .inner{background:#111;border:2px solid #ff7a00;border-radius:16px;max-width:600px;width:100%;max-height:90vh;overflow:auto;padding:28px;position:relative;box-shadow:0 0 40px #ff7a0088}
+  .close{position:absolute;top:10px;right:14px;background:none;border:none;color:#ff7a00;font-size:2rem;cursor:pointer}
+  .big{font-size:4rem;text-align:center}
+  .tl{border-left:3px solid #ff7a00;margin-left:10px}
+  .tl .ev{padding:10px 20px;cursor:pointer;position:relative}
+  .tl .ev:before{content:"";position:absolute;left:-10px;top:18px;width:16px;height:16px;border-radius:50%;background:#ff7a00}
+  .tl .ev:hover{background:#1f1000}
+  .tl .ev b{color:#ff7a00}
+  .tl .more{display:none;color:#ccc;margin-top:6px}
+  .tl .ev.open .more{display:block}
+  .map{position:relative;background:#1a0f00;border:2px solid #ff7a00;border-radius:14px;height:320px;overflow:hidden}
+  .pin{position:absolute;font-size:1.8rem;cursor:pointer;transition:.2s}
+  .pin:hover{transform:scale(1.4)}
+  .region{position:absolute;border-radius:50%;opacity:.35}
+  input[type=text]{background:#000;border:1px solid #ff7a00;color:#fff;border-radius:20px;padding:8px 16px;width:100%;max-width:350px;margin-top:10px}
+  .quizopt{display:block;width:100%;text-align:left;background:#000;color:#fff;border:1px solid #ff7a00;border-radius:8px;padding:10px;margin:6px 0;cursor:pointer}
+  .quizopt:hover{background:#2a1500}
+  .right{background:#1b5e20!important}.wrong{background:#7f1d1d!important}
+  footer{text-align:center;padding:25px;border-top:3px solid #ff7a00;color:#999;background:#000}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">👽 XENO COMPANIONS</div>
+  <div class="tabs" id="tabs"></div>
+</header>
+
+<!-- PAGE 1 -->
+<div class="page active" id="home">
+  <div class="hero">
+    <h1>Alien Life, Tamed</h1>
+    <p>Welcome to Kharos, a far-off world where humans learned to live with alien creatures. Explore the planet, meet the animals, and find out how settlers earned their trust.</p>
+    <button class="btn" onclick="go('creatures')">Meet the Creatures →</button>
+    <button class="btn" onclick="randomCreature()">🎲 Surprise Me</button>
+  </div>
+  <h2>Explore the Site</h2>
+  <div class="grid" id="homecards"></div>
+  <h2>Quick Facts</h2>
+  <div class="stats">
+    <div><b id="cCount">0</b>Creature species</div>
+    <div><b>4,000</b>Original settlers</div>
+    <div><b>5</b>Regions on Kharos</div>
+    <div><b>2147</b>Year of landing</div>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="planet">
+  <h1>Planet Kharos</h1>
+  <p>Kharos is a warm, rust-colored world orbiting an orange dwarf star. Skies glow amber, oceans are shallow, and fungal forests cover the land. Click a pin on the map to explore each region.</p>
+  <div class="stats">
+    <div><b>Star</b>Orange dwarf, Ember-9</div>
+    <div><b>Day length</b>31 hours</div>
+    <div><b>Gravity</b>0.85 × Earth</div>
+    <div><b>Moons</b>2 (Cinder and Ash)</div>
+  </div>
+  <h2>Interactive Map</h2>
+  <div class="map" id="map"></div>
+  <div class="box" id="regionInfo" style="margin-top:15px"><i>Click a pin on the map...</i></div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="creatures">
+  <h1>Creature Catalog</h1>
+  <p>Click any creature to learn more about it.</p>
+  <input type="text" id="search" placeholder="🔍 Search creatures...">
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="creatureGrid"></div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page" id="colonists">
+  <h1>The Human Colonists</h1>
+  <p>Click each event in the timeline to read the details.</p>
+  <div class="tl" id="timeline"></div>
+  <h2>Colony Leaders</h2>
+  <div class="grid" id="leaders"></div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page" id="guide">
+  <h1>Domestication Guide</h1>
+  <p>Settlers follow the <b style="color:#ff7a00">Rule of Trust</b>: never take an animal by force. Here are the four steps they use.</p>
+  <div class="grid" id="steps"></div>
+  <h2>Test Your Knowledge</h2>
+  <div class="box" id="quiz"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="inner">
+    <button class="close" onclick="closeModal()">×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<footer>© 2150 Xeno Companions · A fictional project about the future</footer>
+
+<script>
+const creatures=[
+ {n:"Glowback Drifter",e:"🦎",t:"Companion",r:"Fungal Forests",d:"A lizard-like animal with a glowing spine. Calm and curious.",diet:"Fungus and insects",size:"Small (40 cm)",tame:90,danger:10,fact:"Its spine glows brighter when it feels safe, so owners know its mood at a glance."},
+ {n:"Dune Skimmer",e:"🐪",t:"Transport",r:"Dust Plains",d:"A six-legged herd animal that glides over sand.",diet:"Dry moss",size:"Large (2.5 m)",tame:70,danger:20,fact:"Its wide feet spread out like snowshoes so it never sinks in the dust."},
+ {n:"Ember Wing",e:"🦇",t:"Guard",r:"Cinder Mountains",d:"A small flying hunter with heat-sensing eyes.",diet:"Small rodents",size:"Small (wingspan 1 m)",tame:55,danger:45,fact:"It can spot a person's body heat from 2 km away, which makes it great for rescues."},
+ {n:"Spore Grazer",e:"🐛",t:"Livestock",r:"Fungal Forests",d:"A gentle giant that eats fungus.",diet:"Giant mushrooms",size:"Huge (5 m)",tame:95,danger:5,fact:"Its wool-like fur is warm, light, and naturally glows a little at night."},
+ {n:"Mind-Mirror Chirper",e:"🦜",t:"Helper",r:"Amber Shallows",d:"A clever mimic that copies sounds and gestures.",diet:"Seeds and berries",size:"Small (30 cm)",tame:85,danger:5,fact:"It can learn up to 300 human words but does not always know what they mean."},
+ {n:"Tide Pup",e:"🦦",t:"Companion",r:"Amber Shallows",d:"A playful otter-like swimmer with webbed paws.",diet:"Shellfish",size:"Small (60 cm)",tame:88,danger:8,fact:"Tide Pups hold hands while sleeping so they don't drift apart."},
+ {n:"Lava Hound",e:"🐕",t:"Guard",r:"Cinder Mountains",d:"A heat-loving, dog-sized predator with warm stone-like skin.",diet:"Meat",size:"Medium (1 m)",tame:50,danger:60,fact:"Its skin stays warm even in cold weather, so colonists sleep next to them."},
+ {n:"Whisper Moth",e:"🦋",t:"Helper",r:"Fungal Forests",d:"A huge moth whose wings spread pollen and healing dust.",diet:"Nectar",size:"Medium (wingspan 1.5 m)",tame:75,danger:3,fact:"Its dust is used to speed up wound healing."},
+ {n:"Shell Hauler",e:"🐢",t:"Transport",r:"Amber Shallows",d:"A slow, strong armored swimmer that pulls boats and cargo.",diet:"Sea algae",size:"Huge (4 m)",tame:80,danger:10,fact:"Haulers can live over 200 years, so one family may own the same animal for generations."},
+ {n:"Spark Fox",e:"🦊",t:"Companion",r:"Dust Plains",d:"A quick fox-like creature that makes small static sparks.",diet:"Insects and seeds",size:"Small (50 cm)",tame:70,danger:25,fact:"Its fur crackles with static, and it can power a small lamp when it's excited."},
+ {n:"Crystal Stag",e:"🦌",t:"Livestock",r:"Cinder Mountains",d:"A deer-like grazer with antlers made of natural crystal.",diet:"Mountain moss",size:"Large (2 m)",tame:65,danger:15,fact:"Its antlers fall off every year and are used in jewelry and tools."},
+ {n:"Night Weaver",e:"🕷️",t:"Helper",r:"Fungal Forests",d:"A friendly spider that weaves strong, glowing silk.",diet:"Flies",size:"Medium (50 cm)",tame:60,danger:20,fact:"Its silk is stronger than steel cable and is used to build bridges."},
+ {n:"Void Whale",e:"🐋",t:"Wild",r:"Amber Shallows",d:"A gigantic gentle sea giant that sings low songs. Too big to tame, but it lets people travel with it.",diet:"Plankton",size:"Gigantic (40 m)",tame:20,danger:5,fact:"Its songs are used by colonists as a sort of natural alarm clock before storms."},
+ {n:"Rust Roller",e:"🦔",t:"Livestock",r:"Dust Plains",d:"A round armored creature that rolls into a ball when scared.",diet:"Roots",size:"Small (70 cm)",tame:92,danger:2,fact:"Farmers use them to plow fields by letting them roll over the soil."}
+];
+const types=["All","Companion","Transport","Guard","Livestock","Helper","Wild"];
+const regions=[
+ {n:"Fungal Forests",e:"🍄",x:15,y:25,c:"#a0522d",d:"Huge glowing mushrooms tower overhead. The air is damp and full of spores. Home to many gentle creatures."},
+ {n:"Dust Plains",e:"🏜️",x:55,y:60,c:"#cc7a00",d:"Flat orange deserts swept by dust storms. Fast creatures roam here."},
+ {n:"Cinder Mountains",e:"🌋",x:75,y:20,c:"#8b0000",d:"Warm volcanic peaks. Cooler caves shelter many hunters."},
+ {n:"Amber Shallows",e:"🌊",x:30,y:70,c:"#ff9d2f",d:"A warm, shallow sea that glows amber. Fish and swimmers thrive here."},
+ {n:"New Hearth",e:"🏘️",x:50,y:30,c:"#ffffff",d:"The first human town, protected by a glass dome. About 12,000 people live here today."}
+];
+const timeline=[
+ ["2147","Landing","About 4,000 settlers landed on Kharos in six ships after a 90-year journey. Their first act was to plant a flag and name the region New Hearth."],
+ ["2150","First Contact","A Glowback Drifter wandered into camp during the first night. The settlers fed it, and it never left."],
+ ["2165","The Dust Winter","A massive storm destroyed crops. Dune Skimmers led lost settlers to safety, creating the first great bond between humans and aliens."],
+ ["2180","The Rule of Trust","The colony council wrote the Rule of Trust, banning taking animals by force."],
+ ["2210","The Great Migration","Colonists spread to all five regions with their partner animals."],
+ ["2250","Today","Over 12,000 humans live on Kharos, and hundreds of animals live with them."]
+];
+const leaders=[
+ ["👩‍🚀","Commander Elena Voss","Led the landing. Insisted on studying animals before approaching them."],
+ ["🧑‍🔬","Dr. Kofi Mensah","The first xenobiologist, and the one who fed the first Drifter."],
+ ["👨‍🌾","Ravi Patel","Farmer who developed the first Spore Grazer herd."],
+ ["👩‍⚖️","Judge Mara Lin","Wrote the Rule of Trust."]
+];
+const steps=[
+ ["1️⃣","Observe","Watch from a distance for weeks. Learn what the animal eats and fears."],
+ ["2️⃣","Offer","Leave food and shelter nearby, but never force contact."],
+ ["3️⃣","Bond","Spend time near the animal until it approaches you."],
+ ["4️⃣","Partner","Train gently with rewards. After generations, the species becomes domesticated."]
+];
+const quiz=[
+ {q:"What is the Rule of Trust?",a:["Never take an animal by force","Always carry food","Only tame small animals"],c:0},
+ {q:"Which creature carries boats and cargo across the sea?",a:["Shell Hauler","Ember Wing","Spark Fox"],c:0},
+ {q:"What helped settlers survive the Dust Winter?",a:["Dune Skimmers","Lava Hounds","Void Whales"],c:0},
+ {q:"Which creature's antlers are made of crystal?",a:["Crystal Stag","Rust Roller","Night Weaver"],c:0}
+];
+
+const pages=[["home","🏠 Home"],["planet","🪐 Planet"],["creatures","🐾 Creatures"],["colonists","👩‍🚀 Colonists"],["guide","📘 Guide"]];
+const $=id=>document.getElementById(id);
+
+function go(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.p===id));
+  window.scrollTo(0,0);
+}
+pages.forEach(([id,label])=>{
+  const b=document.createElement("button");
+  b.className="tab"+(id==="home"?" active":"");b.textContent=label;b.dataset.p=id;
+  b.onclick=()=>go(id);$("tabs").appendChild(b);
+});
+
+/* Home */
+$("cCount").textContent=creatures.length;
+pages.slice(1).forEach(([id,label])=>{
+  const d=document.createElement("div");d.className="card";
+  d.innerHTML=`<h3>${label}</h3><p>Click to open</p>`;
+  d.onclick=()=>go(id);$("homecards").appendChild(d);
+});
+
+/* Creatures */
+let filter="All";
+function drawCreatures(){
+  const q=$("search").value.toLowerCase();
+  $("creatureGrid").innerHTML="";
+  creatures.forEach((c,i)=>{
+    if(filter!=="All"&&c.t!==filter)return;
+    if(!c.n.toLowerCase().includes(q))return;
+    const d=document.createElement("div");d.className="card";
+    d.innerHTML=`<div class="emoji">${c.e}</div><h3>${c.n}</h3><p>${c.d}</p><span class="tag">${c.t}</span>`;
+    d.onclick=()=>showCreature(i);
+    $("creatureGrid").appendChild(d);
+  });
+  if(!$("creatureGrid").children.length)$("creatureGrid").innerHTML="<p>No creatures found.</p>";
+}
+types.forEach(t=>{
+  const b=document.createElement("button");b.textContent=t;if(t==="All")b.className="on";
+  b.onclick=()=>{filter=t;document.querySelectorAll("#filters button").forEach(x=>x.classList.remove("on"));b.classList.add("on");drawCreatures()};
+  $("filters").appendChild(b);
+});
+$("search").oninput=drawCreatures;
+function showCreature(i){
+  const c=creatures[i];
+  $("modalBody").innerHTML=`
+    <div class="big">${c.e}</div>
+    <h2 style="border:none;text-align:center">${c.n}</h2>
+    <p style="text-align:center"><span class="tag">${c.t}</span></p>
+    <p>${c.d}</p>
+    <div class="stats">
+      <div><b>Habitat</b>${c.r}</div>
+      <div><b>Diet</b>${c.diet}</div>
+      <div><b>Size</b>${c.size}</div>
+    </div>
+    Tameness (${c.tame}%)<div class="bar"><span style="width:${c.tame}%"></span></div>
+    Danger (${c.danger}%)<div class="bar"><span style="width:${c.danger}%"></span></div>
+    <div class="box"><b style="color:#ff7a00">Fun fact:</b> ${c.fact}</div>`;
+  $("modal").classList.add("show");
+}
+function closeModal(){$("modal").classList.remove("show")}
+function randomCreature(){go("creatures");showCreature(Math.floor(Math.random()*creatures.length))}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+drawCreatures();
+
+/* Planet map */
+regions.forEach(r=>{
+  const g=document.createElement("div");g.className="region";
+  g.style.cssText=`left:${r.x-8}%;top:${r.y-12}%;width:22%;height:40%;background:${r.c}`;
+  $("map").appendChild(g);
+  const p=document.createElement("div");p.className="pin";p.textContent=r.e;
+  p.style.cssText=`left:${r.x}%;top:${r.y}%`;p.title=r.n;
+  p.onclick=()=>{
+    const list=creatures.filter(c=>c.r===r.n).map(c=>c.e+" "+c.n).join(", ")||"Humans live here!";
+    $("regionInfo").innerHTML=`<h3 style="color:#ff7a00">${r.e} ${r.n}</h3><p>${r.d}</p><p><b>Creatures:</b> ${list}</p>`;
+  };
+  $("map").appendChild(p);
+});
+
+/* Timeline */
+timeline.forEach(([y,t,d])=>{
+  const e=document.createElement("div");e.className="ev";
+  e.innerHTML=`<b>${y}: ${t}</b><div class="more">${d}</div>`;
+  e.onclick=()=>e.classList.toggle("open");
+  $("timeline").appendChild(e);
+});
+leaders.forEach(([e,n,d])=>{
+  const c=document.createElement("div");c.className="card";
+  c.innerHTML=`<div class="emoji">${e}</div><h3>${n}</h3><p>${d}</p>`;
+  $("leaders").appendChild(c);
+});
+
+/* Guide */
+steps.forEach(([e,t,d])=>{
+  const c=document.createElement("div");c.className="card";
+  c.innerHTML=`<div class="emoji">${e}</div><h3>${t}</h3><p>${d}</p>`;
+  $("steps").appendChild(c);
+});
+
+/* Quiz */
+let qi=0,score=0;
+function drawQuiz(){
+  if(qi>=quiz.length){
+    $("quiz").innerHTML=`<h3 style="color:#ff7a00">You scored ${score} / ${quiz.length}!</h3><button class="btn" onclick="qi=0;score=0;drawQuiz()">Try Again</button>`;
+    return;
+  }
+  const q=quiz[qi];
+  const order=q.a.map((a,i)=>i).sort(()=>Math.random()-.5);
+  $("quiz").innerHTML=`<h3>${qi+1}. ${q.q}</h3>`;
+  order.forEach(i=>{
+    const b=document.createElement("button");b.className="quizopt";b.textContent=q.a[i];
+    b.onclick=()=>{
+      if(i===q.c){b.classList.add("right");score++}else b.classList.add("wrong");
+      document.querySelectorAll(".quizopt").forEach(x=>x.disabled=true);
+      setTimeout(()=>{qi++;drawQuiz()},900);
+    };
+    $("quiz").appendChild(b);
+  });
+}
+drawQuiz();
+</script>
+</body>
+</html>
